@@ -1,0 +1,8 @@
+= Showcase for Gitlab with Appsmith
+
+This project holds a showcase for Gitlab with Appsmith
+
+== Links
+
+- https://about.gitlab.com/
+- https://docs.appsmith.com/
