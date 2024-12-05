@@ -22,8 +22,10 @@ target/
 *.key
 
 # Gitlab
-podman/config.toml
-podman/gitlab-data/*
+infrastructure/config.toml
+infrastructure/gitlab-data/*
+infrastructure/appsmith-data/*
+
 
 # Misc
 **/token.txt
