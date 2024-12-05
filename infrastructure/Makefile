@@ -70,10 +70,10 @@ pd-machine-rm:
 pd-machine-recreate: pd-machine-rm pd-machine-init pd-machine-start
 
 pd-pod-create:
-	@podman pod create -n $(PODNAME) --network bridge \
-		-p 10022:22 # Gitlab ssh \
-		-p 10443:10443 # Gitlab web \
-		-p 4567:4567 # Gitlab registry \
+	podman pod create -n $(PODNAME) --network bridge  \
+		-p 10022:22 `# Gitlab ssh` \
+		-p 10443:10443 `# Gitlab web` \
+		-p 4567:4567 `# Gitlab registry` \
 		-p 11080:80 -p 11443:443 # Appsmith web
 
 pd-pod-rm:
@@ -100,7 +100,7 @@ pd-runner:
 pd-appsmith:
 	@podman run -dit --name appsmith --pod=$(PODNAME) \
 		-v ./appsmith-data:/appsmith-stacks \
-		docker.io/docker.io/appsmith/appsmith-ee:latest
+		docker.io/appsmith/appsmith-ee:latest
 
 pd-runner-podman-build:
 	@podman build -t $(RUNNER_IMAGE_NAME) -f runner/Containerfile \
