@@ -29,11 +29,6 @@ BUILDER_IMAGE_NAME := "custom-builder"
 		exit 1; \
 	fi
 
---check-token:
-ifndef TOKEN
-	$(error $$TOKEN must be set: TOKEN=abcd123 make $(MAKECMDGOALS))
-endif
-
 --get-token:
 	@echo "# This requires Podman >=4.1"
 	@echo "#podman secret exists ACCESS_TOKEN && podman secret rm ACCESS_TOKEN || true"
