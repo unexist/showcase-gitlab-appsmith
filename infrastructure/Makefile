@@ -35,7 +35,7 @@ ifndef TOKEN
 endif
 
 --get-token:
-	@echo "# This requires Podman >=1.4"
+	@echo "# This requires Podman >=4.1"
 	@echo "#podman secret exists ACCESS_TOKEN && podman secret rm ACCESS_TOKEN || true"
 
 	@podman secret rm ACCESS_TOKEN || true
