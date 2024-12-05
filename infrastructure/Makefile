@@ -71,8 +71,10 @@ pd-machine-recreate: pd-machine-rm pd-machine-init pd-machine-start
 
 pd-pod-create:
 	@podman pod create -n $(PODNAME) --network bridge \
-		-p 10022:22 -p 10080:80 -p 10443:10443 \
-		-p 4567:4567
+		-p 10022:22 # Gitlab ssh \
+		-p 10443:10443 # Gitlab web \
+		-p 4567:4567 # Gitlab registry \
+		-p 11080:80 -p 11443:443 # Appsmith web
 
 pd-pod-rm:
 	@podman pod rm -f $(PODNAME)
@@ -95,6 +97,11 @@ pd-runner:
 		-v ./gitlab.crt:/etc/gitlab-runner/certs/gitlab.crt \
 		docker.io/gitlab/gitlab-runner:latest
 
+pd-appsmith:
+	@podman run -dit --name appsmith --pod=$(PODNAME) \
+		-v ./appsmith-data:/appsmith-stacks \
+		docker.io/docker.io/appsmith/appsmith-ee:latest
+
 pd-runner-podman-build:
 	@podman build -t $(RUNNER_IMAGE_NAME) -f runner/Containerfile \
 		--build-arg=GITLAB_URL=$(GITLAB_URL) \
@@ -104,22 +111,7 @@ pd-runner-podman-build:
 pd-runner-builder-build:
 	@podman build -t $(BUILDER_IMAGE_NAME) -f builder/Containerfile
 
-pd-gitlab-prepare-cache: #pd-runner-builder-build
-	@podman login -u $(GITLAB_MAIL) -p $(GITLAB_PASS) --tls-verify=false https://$(REGISTRY_URL)
-
-	# Runner builder
-	@podman push --tls-verify=false \
-		$(BUILDER_IMAGE_NAME):latest $(REGISTRY_URL)/root/showcase-dagger-golang/$(BUILDER_IMAGE_NAME):latest
-
-	# Dagger builder
-	@podman pull docker.io/library/alpine:latest
-	@podman push --tls-verify=false \
-		docker.io/library/alpine:latest $(REGISTRY_URL)/root/showcase-dagger-golang/alpine:latest
-
-	# Dagger runner
-	@podman pull docker.io/library/golang:latest
-	@podman push --tls-verify=false \
-		docker.io/library/golang:latest $(REGISTRY_URL)/root/showcase-dagger-golang/golang:latest
+pd-build: pd-runner-podman-build pd-runner-builder-build
 
 # TOKEN=abcd123 make pd-runner-podman
 pd-runner-podman: --guard-TOKEN
