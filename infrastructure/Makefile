@@ -8,7 +8,6 @@ SSL_ORG_NAME := unexist.dev
 SSL_ORG_UNIT := showcase
 SSL_FQDN := gitlab
 
-GITLAB_MAIL := "admin@local"
 GITLAB_PASS := "todo_showcase!42"
 GITLAB_URL := "gitlab:10443"
 REGISTRY_URL := "localhost:4567"
@@ -34,12 +33,12 @@ BUILDER_IMAGE_NAME := "custom-builder"
 	@echo "#podman secret exists ACCESS_TOKEN && podman secret rm ACCESS_TOKEN || true"
 
 	@podman secret rm ACCESS_TOKEN || true
-	@echo "-u $(GITLAB_MAIL):$(GITLAB_PASS)" | curl -s --insecure -X GET \
+	@echo "-u root:$(GITLAB_PASS)" | curl -s --insecure -X GET \
 		-K- "https://$(GITLAB_URL)/jwt/auth?service=container_registry&scope=repository:$(BUILDER_IMAGE_NAME):pull,push" | jq .token | \
 		podman secret create ACCESS_TOKEN -
 
 list-repository:
-	@curl -s --insecure -X GET -u "$(GITLAB_MAIL):$(GITLAB_PASS)" \
+	@curl -s --insecure -X GET -u "root:$(GITLAB_PASS)" \
 		"https://$(GITLAB_URL)/jwt/auth?service=container_registry&scope=registry:catalog:*" | jq .token | \
 		xargs -i curl -s --insecure --header "Authorization: Bearer {}" "https://$(REGISTRY_URL)/v2/_catalog" | jq .
 
@@ -76,14 +75,19 @@ pd-pod-rm:
 
 pd-pod-recreate: pd-pod-rm pd-pod-create
 
+# https://docs.gitlab.com/ee/administration/environment_variables.html
 pd-gitlab: --gen-ssl
+	# https://forum.gitlab.com/t/issues-with-gitlab-ce-docker-upgrade/13505
+	@mkdir -p ./gitlab-data/git-data/repositories
+	@chmod 2770 ./gitlab-data/git-data/repositories
+
 	@podman run -dit --name gitlab --pod=$(PODNAME) \
 		--memory=4096m --cpus=4 \
 		-v ./gitlab.crt:/etc/gitlab/ssl/gitlab.crt \
 		-v ./gitlab.key:/etc/gitlab/ssl/gitlab.key \
 		-v ./gitlab.rb:/etc/gitlab/gitlab.rb \
 		-v ./gitlab-data:/var/opt/gitlab \
-		-e GITLAB_ROOT_EMAIL=$(GITLAB_MAIL) -e GITLAB_ROOT_PASSWORD=$(GITLAB_PASS) \
+		-e GITLAB_ROOT_PASSWORD=$(GITLAB_PASS) \
 		docker.io/gitlab/gitlab-ce:latest
 
 pd-runner:
