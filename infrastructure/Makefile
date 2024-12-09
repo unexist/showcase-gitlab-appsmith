@@ -79,6 +79,7 @@ pd-pod-recreate: pd-pod-rm pd-pod-create
 pd-gitlab: --gen-ssl
 	# https://forum.gitlab.com/t/issues-with-gitlab-ce-docker-upgrade/13505
 	@mkdir -p ./gitlab-data/git-data/repositories
+	@mkdir -p ./gitlab-logs
 	@chmod 2770 ./gitlab-data/git-data/repositories
 
 	@podman run -dit --name gitlab --pod=$(PODNAME) \
@@ -87,6 +88,7 @@ pd-gitlab: --gen-ssl
 		-v ./gitlab.key:/etc/gitlab/ssl/gitlab.key \
 		-v ./gitlab.rb:/etc/gitlab/gitlab.rb \
 		-v ./gitlab-data:/var/opt/gitlab \
+		-v ./gitlab-logs:/var/log/gitlab \
 		-e GITLAB_ROOT_PASSWORD=$(GITLAB_PASS) \
 		docker.io/gitlab/gitlab-ce:latest
 

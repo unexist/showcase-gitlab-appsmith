@@ -51,6 +51,7 @@ release.properties
 # Gitlab
 infrastructure/config.toml
 infrastructure/gitlab-data/*
+infrastructure/gitlab-logs/*
 infrastructure/appsmith-data/*
 
 # Misc
