@@ -70,7 +70,7 @@ pd-pod-create:
 		-p 10022:22 `# Gitlab ssh` \
 		-p 10443:10443 `# Gitlab web` \
 		-p 4567:4567 `# Gitlab registry` \
-		-p 5432:5432 `# Postghres`\
+		-p 5432:5432 `# Postgres`\
 		-p 11080:80 -p 11443:443 # Appsmith web
 
 pd-pod-rm:
@@ -93,6 +93,7 @@ pd-gitlab: --gen-ssl
 		-v ./gitlab-data:/var/opt/gitlab \
 		-v ./gitlab-logs:/var/log/gitlab \
 		-e GITLAB_ROOT_PASSWORD=$(GITLAB_PASS) \
+		-e DATABASE_URL=postgresql://$(PG_USER):$(PG_PASS)@localhost:5432 \
 		docker.io/gitlab/gitlab-ce:latest
 
 pd-runner:
