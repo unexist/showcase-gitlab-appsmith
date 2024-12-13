@@ -1,5 +1,7 @@
 # Config
 PODNAME := showcase
+PG_USER := postgres
+PG_PASS := postgres
 
 SSL_COUNTRY := DE
 SSL_STATE := DE
@@ -68,6 +70,7 @@ pd-pod-create:
 		-p 10022:22 `# Gitlab ssh` \
 		-p 10443:10443 `# Gitlab web` \
 		-p 4567:4567 `# Gitlab registry` \
+		-p 5432:5432 `# Postghres`\
 		-p 11080:80 -p 11443:443 # Appsmith web
 
 pd-pod-rm:
@@ -102,6 +105,12 @@ pd-appsmith:
 	@podman run -dit --name appsmith --pod=$(PODNAME) \
 		-v ./appsmith-data:/appsmith-stacks \
 		docker.io/appsmith/appsmith-ee:latest
+
+pd-postgres:
+	@podman run -dit --name postgres --pod=$(PODNAME) \
+		-e POSTGRES_USER=$(PG_USER) \
+		-e POSTGRES_PASSWORD=$(PG_PASS) \
+		postgres:latest
 
 pd-runner-podman-build:
 	@podman build -t $(RUNNER_IMAGE_NAME) -f runner/Containerfile \
