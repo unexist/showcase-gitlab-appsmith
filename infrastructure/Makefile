@@ -1,7 +1,5 @@
 # Config
 PODNAME := showcase
-PG_USER := postgres
-PG_PASS := postgres
 
 SSL_COUNTRY := DE
 SSL_STATE := DE
@@ -9,6 +7,10 @@ SSL_LOCALITY := DE
 SSL_ORG_NAME := unexist.dev
 SSL_ORG_UNIT := showcase
 SSL_FQDN := gitlab
+
+PG_USER := postgres
+PG_PASS := postgres
+PG_DB := gitlab
 
 GITLAB_PASS := "todo_showcase!42"
 GITLAB_URL := "gitlab:10443"
@@ -93,7 +95,7 @@ pd-gitlab: --gen-ssl
 		-v ./gitlab-data:/var/opt/gitlab \
 		-v ./gitlab-logs:/var/log/gitlab \
 		-e GITLAB_ROOT_PASSWORD=$(GITLAB_PASS) \
-		-e DATABASE_URL=postgresql://$(PG_USER):$(PG_PASS)@localhost:5432 \
+		-e DATABASE_URL=postgresql://$(PG_USER):$(PG_PASS)@localhost:5432/$(PG_DB) \
 		docker.io/gitlab/gitlab-ce:latest
 
 pd-runner:
@@ -111,6 +113,7 @@ pd-postgres:
 	@podman run -dit --name postgres --pod=$(PODNAME) \
 		-e POSTGRES_USER=$(PG_USER) \
 		-e POSTGRES_PASSWORD=$(PG_PASS) \
+		-e POSTGRES_DB=$(PG_DB) \
 		postgres:latest
 
 pd-runner-podman-build:
