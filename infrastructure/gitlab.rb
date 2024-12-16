@@ -16,7 +16,7 @@ prometheus_monitoring['enable'] = false
 # 2024-12-16_13:50:43.13478 WARNING:  could not create Unix-domain socket in directory "/var/opt/gitlab/postgresql"
 # 2024-12-16_13:50:43.13516 FATAL:  could not create any Unix-domain sockets
 # 2024-12-16_13:50:43.13924 LOG:  database system is shut down
-postgresql['enable'] = false
+#postgresql['enable'] = false
 
 # Constrained memory - https://docs.gitlab.com/omnibus/settings/memory_constrained_envs.html
 puma['worker_processes'] = 0

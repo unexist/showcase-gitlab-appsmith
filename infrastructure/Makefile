@@ -92,10 +92,10 @@ pd-gitlab: --gen-ssl
 		-v ./gitlab.crt:/etc/gitlab/ssl/gitlab.crt \
 		-v ./gitlab.key:/etc/gitlab/ssl/gitlab.key \
 		-v ./gitlab.rb:/etc/gitlab/gitlab.rb \
-		-v ./gitlab-data:/var/opt/gitlab \
+		-v ./gitlab-data:/var/opt/gitlab/postgres/data \
 		-v ./gitlab-logs:/var/log/gitlab \
 		-e GITLAB_ROOT_PASSWORD=$(GITLAB_PASS) \
-		-e DATABASE_URL=postgresql://$(PG_USER):$(PG_PASS)@localhost:5432/$(PG_DB) \
+		#-e DATABASE_URL=postgresql://$(PG_USER):$(PG_PASS)@localhost:5432/$(PG_DB) \
 		docker.io/gitlab/gitlab-ce:latest
 
 pd-runner:
