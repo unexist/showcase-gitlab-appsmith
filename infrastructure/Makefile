@@ -154,3 +154,7 @@ pd-runner-podman: --guard-TOKEN
 pd-init: pd-machine-init pd-machine-start pd-pod-create
 
 pd-start: pd-gitlab
+
+clean:
+	rm -rf ./gitlab-data/*
+	rm -rf ./gitlab-logs/*
